@@ -91,3 +91,8 @@ class TabWidget(QtGui.QTabWidget):
             return
         self.setTabText(index, title)
         self.setTabToolTip(index, title)
+
+    def reloadCurTab(self):
+        index = self.currentIndex()
+        curMdView = self.mdView(index)
+        curMdView.reload()

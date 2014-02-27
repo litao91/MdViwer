@@ -42,6 +42,9 @@ class MarkdownView(QtWebKit.QWebView):
         self.reload()
 
     def reload(self):
+        if self.file_path is None:
+            return
+        print('reloading')
         infile_handle = open(self.file_path, 'r')
         md_str = infile_handle.read()
         self.setMarkdown(md_str)

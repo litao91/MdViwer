@@ -1,4 +1,8 @@
-# Introduction
+# Markdown Viewer
+This is a very simple markdown viewer
 
-A very simple markdown viewer implemented with PySide
+## Customization
+The style can be changed in the `res/style.css`, currently only support
+single file css.
+
 

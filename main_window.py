@@ -1,7 +1,5 @@
-from markdown_view import MarkdownView
 from PySide import QtGui, QtCore
 from tabwidget import TabWidget
-import sys
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -17,6 +15,8 @@ class MainWindow(QtGui.QMainWindow):
 
         self.m_fileMenu = None
         self.m_fileOpenFileAction = None
+
+        self.m_reloadAction = None
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setUpMenu()
@@ -34,13 +34,6 @@ class MainWindow(QtGui.QMainWindow):
 
         self.retranslate()
 
-    def initWebView(self):
-        if self.m_mdView is None:
-            self.m_mdView = MarkdownView()
-        md_str = open(sys.argv[1], 'r').read()
-        self.m_mdView.setMarkdown(md_str)
-        self.setCentralWidget(self.m_mdView)
-
     def setUpMenu(self):
         # File
         self.m_fileMenu = QtGui.QMenu(self.menuBar(), "File")
@@ -54,6 +47,11 @@ class MainWindow(QtGui.QMainWindow):
         self.m_fileOpenFileAction.triggered.connect(self.fileOpen)
         self.m_fileMenu.addAction(self.m_fileOpenFileAction)
 
+        self.m_reloadAction = QtGui.QAction(self.m_fileMenu)
+        self.m_reloadAction.setShortcut(QtGui.QKeySequence.Refresh)
+        self.m_reloadAction.triggered.connect(self.m_tabWidget.reloadCurTab)
+        self.m_fileMenu.addAction(self.m_reloadAction)
+
     def fileOpen(self):
         file_name = QtGui.QFileDialog \
             .getOpenFileName(self, "Open Resource",
@@ -65,6 +63,7 @@ class MainWindow(QtGui.QMainWindow):
         """ Handle the translation, currently hard coded. """
         self.m_fileMenu.setTitle("&File")
         self.m_fileOpenFileAction.setText("&Open File...")
+        self.m_reloadAction.setText("&Reload Current Tab")
 
     def tabWidget(self):
         return self.m_tabWidget
