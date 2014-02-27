@@ -13,7 +13,7 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         # variable declaration
-        self.m_mdView = None
+        self.m_tabWidget = TabWidget()
 
         self.m_fileMenu = None
         self.m_fileOpenFileAction = None
@@ -21,7 +21,16 @@ class MainWindow(QtGui.QMainWindow):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
         self.setUpMenu()
 
-        self.m_tabWidget = TabWidget()
+        centralWidget = QtGui.QWidget(self)
+        layout = QtGui.QVBoxLayout()
+        layout.setSpacing(0)
+
+        layout.addWidget(self.m_tabWidget)
+        centralWidget.setLayout(layout)
+
+        self.m_tabWidget.newTab()
+
+        self.setCentralWidget(centralWidget)
 
         self.retranslate()
 
@@ -37,6 +46,9 @@ class MainWindow(QtGui.QMainWindow):
         self.m_fileMenu = QtGui.QMenu(self.menuBar(), "File")
         self.menuBar().addMenu(self.m_fileMenu)
 
+        self.m_fileMenu.addAction(self.m_tabWidget.newTabAction())
+        self.m_fileMenu.addAction(self.m_tabWidget.closeTabAction())
+
         self.m_fileOpenFileAction = QtGui.QAction(self.m_fileMenu)
         self.m_fileOpenFileAction.setShortcut(QtGui.QKeySequence.Open)
         self.m_fileOpenFileAction.triggered.connect(self.fileOpen)
@@ -47,11 +59,12 @@ class MainWindow(QtGui.QMainWindow):
             .getOpenFileName(self, "Open Resource",
                              filter="*.md")
         print(file_name[0])
+        self.tabWidget().loadMd(file_name[0])
 
     def retranslate(self):
         """ Handle the translation, currently hard coded. """
         self.m_fileMenu.setTitle("&File")
         self.m_fileOpenFileAction.setText("&Open File...")
 
-    def tagWidget(self):
+    def tabWidget(self):
         return self.m_tabWidget

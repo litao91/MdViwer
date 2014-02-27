@@ -26,7 +26,7 @@ class Config:
     """
     def __init__(self):
         self.__src_dir = os.path.dirname(os.path.abspath(__file__))
-        self.__style_path = self.__src_dir + '/res/style.css'
+        self.__style_path = 'file://' + self.__src_dir + '/res/style.css'
         self.__working_dir = os.getcwd()
 
     def get_src_dir(self):
@@ -39,4 +39,4 @@ class Config:
         return self.__working_dir
 
 
-config = Config
+config = Config()

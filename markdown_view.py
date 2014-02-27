@@ -1,6 +1,6 @@
 import misaka as md
 import houdini as h
-from PySide import QtWebKit
+from PySide import QtWebKit, QtCore
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
@@ -20,11 +20,15 @@ class HighlightRenderer(md.HtmlRenderer, md.SmartyPants):
 
 class MarkdownView(QtWebKit.QWebView):
     """ Render the markdown with specific style. """
+    mdTitleChanged = QtCore.Signal(str)
 
     def __init__(self):
         super(MarkdownView, self).__init__()
         self.renderer = HighlightRenderer()
         self.style_path = config.get_style_path()
+        self.file_path = None
+        self.setHtml("<h1> Hello Markdown view</h1>")
+        self.header = "Untitled"
 
     def setMarkdown(self, md_str):
         md_renderer = md.Markdown(self.renderer,
@@ -34,14 +38,26 @@ class MarkdownView(QtWebKit.QWebView):
         QtWebKit.QWebView.setHtml(self, html)
 
     def loadMd(self, filePath):
-        md_str = open(filePath, 'r').read()
+        self.file_path = filePath
+        self.reload()
+
+    def reload(self):
+        infile_handle = open(self.file_path, 'r')
+        md_str = infile_handle.read()
         self.setMarkdown(md_str)
+        infile_handle.close()
 
     def render(self, html):
         soup = BeautifulSoup(html)
         soup = self.set_css(soup)
-        # print(soup.prettify())
+        header = soup.body.h1.string
+        if header is not '' or header is not None:
+            self.header = soup.body.h1.string
+            self.mdTitleChanged.emit(self.header)
         return str(soup)
+
+    def getMdTitleText(self):
+        return self.header
 
     def set_css(self, soup):
         head_tag = soup.new_tag('head')
@@ -49,7 +65,6 @@ class MarkdownView(QtWebKit.QWebView):
         link_tag['media'] = 'screen'
         link_tag['rel'] = 'stylesheet'
         link_tag['type'] = 'text/css'
-        # cur_path =
         link_tag['href'] = self.style_path
         head_tag.append(link_tag)
         soup.html.body.insert_before(head_tag)
