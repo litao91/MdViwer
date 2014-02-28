@@ -6,9 +6,11 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 from bs4 import BeautifulSoup
 from Config import config
+from mdfilemodel import MdFileModel
 
 
 class HighlightRenderer(md.HtmlRenderer, md.SmartyPants):
+
     def block_code(self, text, lang):
         if not lang:
             return '\n<pre><code>%s</code></pre>\n' % \
@@ -19,14 +21,15 @@ class HighlightRenderer(md.HtmlRenderer, md.SmartyPants):
 
 
 class MarkdownView(QtWebKit.QWebView):
+
     """ Render the markdown with specific style. """
     mdTitleChanged = QtCore.Signal(str)
 
-    def __init__(self):
-        super(MarkdownView, self).__init__()
+    def __init__(self, parent=None):
+        super(MarkdownView, self).__init__(parent)
         self.renderer = HighlightRenderer()
         self.style_path = config.get_style_path()
-        self.file_path = None
+        self.m_mdFile = None
         self.setHtml("<h1> Hello Markdown view</h1>")
         self.header = "Untitled"
 
@@ -38,17 +41,18 @@ class MarkdownView(QtWebKit.QWebView):
         QtWebKit.QWebView.setHtml(self, html)
 
     def loadMd(self, filePath):
-        self.file_path = filePath
+        self.m_mdFile = MdFileModel(filePath)
+        self.m_mdFile.fileModified.connect(self.onMdFileModified)
         self.reload()
 
     def reload(self):
-        if self.file_path is None:
+        if self.m_mdFile is None:
             return
         print('reloading')
-        infile_handle = open(self.file_path, 'r')
-        md_str = infile_handle.read()
+        oldScrollPos = self.page().mainFrame().scrollPosition()
+        md_str = self.m_mdFile.read()
         self.setMarkdown(md_str)
-        infile_handle.close()
+        self.page().mainFrame().setScrollPosition(oldScrollPos)
 
     def render(self, html):
         soup = BeautifulSoup(html)
@@ -61,6 +65,9 @@ class MarkdownView(QtWebKit.QWebView):
 
     def getMdTitleText(self):
         return self.header
+
+    def onMdFileModified(self):
+        self.reload()
 
     def set_css(self, soup):
         head_tag = soup.new_tag('head')

@@ -5,4 +5,7 @@ This is a very simple markdown viewer
 The style can be changed in the `res/style.css`, currently only support
 single file css.
 
+## Plan for the Next
 
+* Figure support
+* Latex Support
