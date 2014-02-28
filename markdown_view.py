@@ -1,5 +1,6 @@
 import misaka as md
 import houdini as h
+import os
 from PySide import QtWebKit, QtCore
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -15,6 +16,7 @@ class HighlightRenderer(md.HtmlRenderer, md.SmartyPants):
         if not lang:
             return '\n<pre><code>%s</code></pre>\n' % \
                 h.escape_html(text.strip())
+        print("highlighting " + lang)
         lexer = get_lexer_by_name(lang, stripall=True)
         formatter = HtmlFormatter()
         return highlight(text, lexer, formatter)
@@ -30,7 +32,7 @@ class MarkdownView(QtWebKit.QWebView):
         self.renderer = HighlightRenderer()
         self.style_path = config.get_style_path()
         self.m_mdFile = None
-        self.setHtml("<h1> Hello Markdown view</h1>")
+        self.setHtml("<h1>Welcome to Markdown viewer</h1>")
         self.header = "Untitled"
 
     def setMarkdown(self, md_str):
@@ -56,7 +58,8 @@ class MarkdownView(QtWebKit.QWebView):
 
     def render(self, html):
         soup = BeautifulSoup(html)
-        soup = self.set_css(soup)
+        self._setCss(soup)
+        self._fixImg(soup)
         header = soup.body.h1.string
         if header is not '' or header is not None:
             self.header = soup.body.h1.string
@@ -69,7 +72,15 @@ class MarkdownView(QtWebKit.QWebView):
     def onMdFileModified(self):
         self.reload()
 
-    def set_css(self, soup):
+    def _fixImg(self, soup):
+        for img in soup.find_all('img'):
+            src = img['src']
+            print(src)
+            src = "file://" + os.path.join(self.m_mdFile.absPath(), src)
+            print(src)
+            img['src'] = src
+
+    def _setCss(self, soup):
         head_tag = soup.new_tag('head')
         link_tag = soup.new_tag("link")
         link_tag['media'] = 'screen'
@@ -82,4 +93,3 @@ class MarkdownView(QtWebKit.QWebView):
         main_div_tag.name = 'div'
         main_div_tag['id'] = 'main'
         main_div_tag.wrap(soup.new_tag('body'))
-        return soup

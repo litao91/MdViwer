@@ -7,5 +7,4 @@ single file css.
 
 ## Plan for the Next
 
-* Figure support
 * Latex Support
