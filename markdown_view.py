@@ -40,6 +40,7 @@ class MarkdownView(QtWebKit.QWebView):
         super(MarkdownView, self).__init__(parent)
         self.renderer = HighlightRenderer()
         self.style_path = config.get_style_path()
+        self.mathjax_path = config.get_mathjax_path()
         self.highlight_path = config.get_highlight_path()
         self.m_mdFile = None
         self.setHtml("<h1>Welcome to Markdown viewer</h1>")
@@ -120,11 +121,9 @@ class MarkdownView(QtWebKit.QWebView):
 MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 </script>
 """
-        mathjax_script2 = """
-<script type="text/javascript"
-src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-        """
+        mathjax_script2 = ' <script type="text/javascript" src="' \
+            + self.mathjax_path + \
+            '?config=TeX-AMS-MML_HTMLorMML"> </script>'
         script_tag1 = \
             BeautifulSoup(mathjax_script1).html.head.script
         script_tag2 = \

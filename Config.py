@@ -30,6 +30,8 @@ class Config:
         self.__highlight_path = 'file://' + self.__src_dir + \
             '/res/highlight.css'
         self.__working_dir = os.getcwd()
+        self.__mathjax_dir = 'file://' + self.__src_dir + \
+            '/res/MathJax/MathJax.js'
 
     def get_src_dir(self):
         return self.__src_dir
@@ -42,6 +44,9 @@ class Config:
 
     def get_working_dir(self):
         return self.__working_dir
+
+    def get_mathjax_path(self):
+        return self.__mathjax_dir
 
 
 config = Config()
