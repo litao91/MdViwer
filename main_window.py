@@ -1,3 +1,4 @@
+import os
 from PySide import QtGui, QtCore
 from tabwidget import TabWidget
 
@@ -57,7 +58,8 @@ class MainWindow(QtGui.QMainWindow):
             .getOpenFileName(self, "Open Resource",
                              filter="*.md")
         print(file_name[0])
-        self.tabWidget().loadMd(file_name[0])
+        if os.path.isfile(file_name[0]):
+            self.tabWidget().loadMd(file_name[0])
 
     def retranslate(self):
         """ Handle the translation, currently hard coded. """

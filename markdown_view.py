@@ -129,7 +129,5 @@ src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorM
             BeautifulSoup(mathjax_script1).html.head.script
         script_tag2 = \
             BeautifulSoup(mathjax_script2).html.head.script
-        print(script_tag1)
-        print(script_tag2)
         soup.head.append(script_tag1)
         soup.head.append(script_tag2)
