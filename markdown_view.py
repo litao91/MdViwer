@@ -77,7 +77,6 @@ class MarkdownView(QtWebKit.QWebView):
         if header is not None or header != '':
             self.header = soup.body.h1.string
             self.mdTitleChanged.emit(self.header)
-        print(soup.prettify())
         return str(soup)
 
     def getMdTitleText(self):
