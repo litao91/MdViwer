@@ -1,6 +1,9 @@
 # Markdown Viewer
 This is a very simple markdown viewer
 
+Note: this project is **discontined**, the [morkdown
+project](https://github.com/rvagg/morkdown) has a more modern framework.
+
 ## Customization
 The style can be changed in the `res/style.css`.
 
