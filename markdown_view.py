@@ -117,7 +117,7 @@ class MarkdownView(QtWebKit.QWebView):
     def _setMathJax(self, soup):
         mathjax_script1 = """
 <script type="text/x-mathjax-config">
-MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});
 </script>
 """
         mathjax_script2 = ' <script type="text/javascript" src="' \
